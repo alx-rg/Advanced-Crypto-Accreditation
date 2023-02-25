@@ -58,7 +58,9 @@ function App() {
       else {
         console.log(name, description, faculty, degree, gradDate);
         setIsLoading(true);
-
+        // Sparkly Diploma from the University of McGill in Dietetics in 2018 laying on a {bed of potatoes}
+        const prompt = `This degree is awarded to ${name} ${description} ${degree} ${gradDate}`
+        console.log(prompt);
         // get image with name and description from huggingface
         const res = await axios({
           url: URL,
