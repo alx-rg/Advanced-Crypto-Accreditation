@@ -1,5 +1,6 @@
 .App {
   display: block;
+  background-color: #00677F;
 }
 .navbar {
   display: flex;
@@ -7,6 +8,7 @@
   justify-content: space-around;
   flex-wrap: wrap;
   margin-bottom: 10px;
+  background-color: #fd0;
 }
 .logo {
   display: flex;
