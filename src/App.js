@@ -88,13 +88,14 @@ function App() {
         const nftstorage = new NFTStorage({token: process.env.REACT_APP_NFT_STORAGE_KEY})
         console.log(nftstorage)
 
-        console.log(` ${name} `)
         //upload image to nftstorage
-        const { ipnft } = await nftstorage.store({
+        const response = await nftstorage.store({
           name,
           description: prompt,
           image: new File([dataImg], "image", {type: "image/png"}),
         })
+
+        const {ipnft} = response;
 
         //url metadata to mint nft
         const ipfsURL = `https://ipfs.io/ipfs/${ipnft}/metadata.json` ;
@@ -178,8 +179,8 @@ function App() {
                       <Input style={{border: '2px solid #00A6CE', marginTop: "10px", height:"40px",  width: "100%"}} size="medium" placeholder="Ex snowy mountain, rainforest, postapocalyptic city..." value={scenery} onChange={(e)=> setScenery(e.target.value)}/>
                   </Form.Item>
                   <Form.Item>
-                      <Typography.Text style={{fontWeight: "bolder", fontSize:"16px"}}>Scenery for NFT Image</Typography.Text>
-                      <Select style={{border: '2px solid #00A6CE', marginTop: "10px", height:"40px",  width: "100%"}} size="medium" placeholder="Ex snowy mountain, rainforest, postapocalyptic city..." value={artStyle} 
+                      <Typography.Text style={{fontWeight: "bolder", fontSize:"16px"}}>Art style for NFT</Typography.Text>
+                      <Select style={{border: '2px solid #00A6CE', marginTop: "10px", height:"40px",  width: "100%"}} size="medium" placeholder="Choose art style" value={artStyle} 
                         onChange={(e)=> {
                           setArtStyle(e)}
                         } options={[ { value: "Art Deco", label: "Art Deco" },  
