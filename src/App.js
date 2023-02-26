@@ -1,4 +1,4 @@
-import { Button, Card, Form, Image, Input, Typography, Avatar, Spin, message } from 'antd'
+import { Button, Card, Form, Image, Input, Typography, Avatar, Spin, message, Select } from 'antd'
 import React, { useState } from 'react'
 import axios from 'axios'
 import {Buffer} from 'buffer'
@@ -32,11 +32,12 @@ function App() {
   }
 
   const [name, setName] = useState("");
-  const [description, setDescription] = useState("");
   const [degree, setDegree] = useState("");
   const [faculty, setFaculty] = useState("");
   const [gradDate, setGradDate] = useState();
   const [image, setImage] = useState(DUDegree);
+  const [scenery, setScenery] = useState("");
+  const [artStyle, setArtStyle] = useState();
   const [isLoading, setIsLoading] = useState(false);
   const [isMinted, setIsMinted] = useState(false);
 
@@ -52,21 +53,20 @@ function App() {
     }
     else {
       //check name, description
-      if(!name || !description || !gradDate || !faculty || !degree || (!name && !description)) {
+      if(!name || !gradDate || !faculty || !degree) {
         message.warning("Please input image information !", 1)
       }
       else {
-        console.log(name, description, faculty, degree, gradDate);
+        console.log(name, faculty, degree, gradDate);
         setIsLoading(true);
-        // Sparkly Diploma from the University of McGill in Dietetics in 2018 laying on a {bed of potatoes}
-        const prompt = `This degree is awarded to ${name} ${description} ${degree} ${gradDate}`
+        const prompt = `Person practicing ${degree} in ${scenery} in the style of ${artStyle}`
         console.log(prompt);
-        // get image with name and description from huggingface
+        // get image from huggingface
         const res = await axios({
           url: URL,
           method: 'POST',
           data: JSON.stringify({
-            inputs: description,  options: { wait_for_model: true },
+            inputs: prompt,  options: { wait_for_model: true },
           }),
           responseType: 'arraybuffer',
         })
@@ -92,7 +92,7 @@ function App() {
         //upload image to nftstorage
         const { ipnft } = await nftstorage.store({
           name,
-          description,
+          description: prompt,
           image: new File([dataImg], "image", {type: "image/png"}),
         })
 
@@ -120,7 +120,10 @@ function App() {
         console.log('nft minted successfully');
 
         setName("");
-        setDescription("");
+        setArtStyle();
+        setDegree();
+        setFaculty();
+        setGradDate();
 
       }
     }
@@ -157,10 +160,6 @@ function App() {
                       </div>
                   </Form.Item>
                   <Form.Item>
-                      <Typography.Text style={{fontWeight: "bolder", fontSize:"16px"}}>Description of NFT</Typography.Text>
-                      <Input style={{border: '2px solid #00A6CE', marginTop: "10px", height:"40px",  width: "100%"}} size="medium" placeholder="Create a description..." value={description} onChange={(e)=> setDescription(e.target.value)}/>
-                  </Form.Item>
-                  <Form.Item>
                       <div className="form-group">
                         <Typography.Text style={{fontWeight: "bolder", fontSize:"16px"}}>Degree Name</Typography.Text>
                         <Input style={{border: '2px solid #00A6CE', marginTop: "10px", height:"40px", width: "100%"}} size="medium" placeholder="Degree Name" value={degree} onChange={(e)=> setDegree(e.target.value)}/>
@@ -175,6 +174,34 @@ function App() {
                       <Input style={{border: '2px solid #00A6CE', marginTop: "10px", height:"40px",  width: "100%"}} size="medium" placeholder="Date" value={gradDate} onChange={(e)=> setGradDate(e.target.value)}/>
                   </Form.Item>
                   <Form.Item>
+                      <Typography.Text style={{fontWeight: "bolder", fontSize:"16px"}}>Scenery for NFT Image</Typography.Text>
+                      <Input style={{border: '2px solid #00A6CE', marginTop: "10px", height:"40px",  width: "100%"}} size="medium" placeholder="Ex snowy mountain, rainforest, postapocalyptic city..." value={scenery} onChange={(e)=> setScenery(e.target.value)}/>
+                  </Form.Item>
+                  <Form.Item>
+                      <Typography.Text style={{fontWeight: "bolder", fontSize:"16px"}}>Scenery for NFT Image</Typography.Text>
+                      <Select style={{border: '2px solid #00A6CE', marginTop: "10px", height:"40px",  width: "100%"}} size="medium" placeholder="Ex snowy mountain, rainforest, postapocalyptic city..." value={artStyle} 
+                        onChange={(e)=> {
+                          setArtStyle(e)}
+                        } options={[ { value: "Art Deco", label: "Art Deco" },  
+                        { value: "Art Nouveau", label: "Art Nouveau" },
+                        { value: "Abstract Art", label: "Abstract Art" },
+                        { value: "Bauhaus", label: "Bauhaus" }, 
+                        { value: "Color Field Painting", label: "Color Field Painting" }, 
+                        { value: "Cubism", label: "Cubism" },  
+                        { value: "Digital Art", label: "Digital Art" }, 
+                        { value: "Futurism", label: "Futurism" },  
+                        { value: "Harlem Renaissance", label: "Harlem Renaissance" },  
+                        { value: "Impressionism", label: "Impressionism" }, 
+                        { value: "Minimalism", label: "Minimalism" },  
+                        { value: "Neo-Impressionism", label: "Neo-Impressionism" },  
+                        { value: "Neon Art", label: "Neon Art" },  
+                        { value: "Op Art", label: "Op Art" },  
+                        { value: "Pop Art", label: "Pop Art" },  
+                        { value: "Post-Impressionism", label: "Post-Impressionism" },    
+                        { value: "Street Art", label: "Street Art" }
+                        ]}/>
+                  </Form.Item>
+                  <Form.Item>
                     <Button onClick={handleNFT} type="primary" shape="square" size='large' style={{width: "100%", height:"60px", marginTop: "10px", backgroundColor: "#00677F"}}>
                       Generate & Mint
                     </Button>
@@ -186,18 +213,17 @@ function App() {
                     width='100%'
                     src={`${image}`}
                   />
+                 <div className='spin'>
+                  {
+                    isLoading && <span>Creating your image... <Spin/></span>
+                  }
+                  {
+                    isMinted && <span>Uploading image to ipfs and minting... <Spin/></span>
+                  }
+                </div>
             </div>
           </div>
       </Card>
-    </div>
-
-    <div className='spin'>
-      {
-        isLoading && <span>Creating your image... <Spin/></span>
-      }
-      {
-        isMinted && <span>Uploading image to ipfs and minting... <Spin/></span>
-      }
     </div>
     </div>
   );
