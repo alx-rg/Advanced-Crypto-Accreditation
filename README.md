@@ -2,7 +2,7 @@
 
 #### TLDR
 
-ACCred is an easy to use method to prove an individual has received their accreditation from a specific Institution.
+ACCred is an easy to use method to prove that an individual has in fact received their accreditation from a specific institution. ACCred uses a Stable Diffusion v2 Model Card and the input from the Registrar's office along with some funky scenery provided by the user.
 
 ```mermaid
 graph LR

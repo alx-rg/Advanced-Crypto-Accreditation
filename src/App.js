@@ -31,7 +31,7 @@ function App() {
       setProvider(provider);
   }
 
-  const [name, setName] = useState("");
+  const [studentName, setStudentName] = useState("");
   const [degree, setDegree] = useState("");
   const [faculty, setFaculty] = useState("");
   const [gradDate, setGradDate] = useState();
@@ -53,31 +53,31 @@ function App() {
     }
     else {
       //check name, description
-      if(!name || !gradDate || !faculty || !degree) {
+      if(!studentName || !gradDate || !faculty || !degree) {
         message.warning("Please input image information !", 1)
       }
       else {
-        console.log(name, faculty, degree, gradDate);
-        setIsLoading(true);
+        console.log(studentName, faculty, degree, gradDate);
+        // setIsLoading(true);
         const prompt = `Person practicing ${degree} in ${scenery} in the style of ${artStyle}`
-        console.log(prompt);
-        // get image from huggingface
-        const res = await axios({
-          url: URL,
-          method: 'POST',
-          data: JSON.stringify({
-            inputs: prompt,  options: { wait_for_model: true },
-          }),
-          responseType: 'arraybuffer',
-        })
+        // console.log(prompt);
+        // // get image from huggingface
+        // const res = await axios({
+        //   url: URL,
+        //   method: 'POST',
+        //   data: JSON.stringify({
+        //     inputs: prompt,  options: { wait_for_model: true },
+        //   }),
+        //   responseType: 'arraybuffer',
+        // })
 
-        console.log(res.data) 
-        const dataImg = res.data;
-        const base64data = Buffer.from(dataImg).toString('base64')
-        const img = `data:image/png;base64,` + base64data 
-        setImage(img)//set img = res
-        // const dataImg = DUDegree;
-        setIsLoading(false);
+        // console.log(res.data) 
+        // const dataImg = res.data;
+        // const base64data = Buffer.from(dataImg).toString('base64')
+        // const img = `data:image/png;base64,` + base64data 
+        // setImage(img)//set img = res
+        // // const dataImg = DUDegree;
+        // setIsLoading(false);
    
         message.info("Please wait for create metadata URL...", 2)
  
@@ -90,7 +90,7 @@ function App() {
 
         //upload image to nftstorage
         const response = await nftstorage.store({
-          name,
+          name: studentName,
           description: prompt,
           image: new File([dataImg], "image", {type: "image/png"}),
         })
@@ -98,14 +98,20 @@ function App() {
         const {ipnft} = response;
 
         //url metadata to mint nft
-        const ipfsURL = `https://ipfs.io/ipfs/${ipnft}/metadata.json` ;
+        let ipfsURL = `https://ipfs.io/ipfs/${ipnft}/metadata.json` ;
+
+        // WORKING: https://nftstorage.link/ipfs/bafybeifcaxugncajjxu3d6tik5spkyesqwuvm4uysye4cb6f6sflcxoj2q/testdata.json
+        ipfsURL = `https://nftstorage.link/ipfs/${ipnft}/metadata.json`
         console.log(ipfsURL)
 
-        //https://ipfs.io/ipfs/QmZ1Uii5sD2zi4dEKTt8cKoM9dXaevCkWbVn28UKV3n2fP?_gl=1*mvhkhn*_ga*NDU2NjE0MzYyLjE2NzcwOTcyNjg.*_ga_5RMPXG14TE*MTY3NzM1MDUzMy40LjAuMTY3NzM1MDUzNS41OC4wLjA.
+        // 
+
+        //degree image: bafkreib525dwem6nkvxpssxcefmn54vkwudplu3hsd432eqk67swizvvue
+        // ipfs://bafkreiebcfgprfpcqmodsjglljji7xrq62fcmag636czzws66a7ohyss6u
 
         //get chainid
-        const { chainId } = await provider.getNetwork()
-        console.log(chainId);
+        const { chainId, name } = await provider.getNetwork()
+        console.log(chainId, name);
 
         //init nft through address and abis
         const nft = new ethers.Contract(config[chainId].nft.address, NFT, provider)
@@ -120,7 +126,7 @@ function App() {
         setIsMinted(false);
         console.log('nft minted successfully');
 
-        setName("");
+        setStudentName("");
         setArtStyle();
         setDegree();
         setFaculty();
@@ -157,7 +163,7 @@ function App() {
                   <Form.Item>
                       <div className="form-group">
                         <Typography.Text style={{fontWeight: "bolder", fontSize:"16px"}}>Student Name</Typography.Text>
-                        <Input style={{border: '2px solid #00A6CE', marginTop: "10px", height:"40px", width: "100%"}} size="medium" placeholder="Create a name..." value={name} onChange={(e)=> setName(e.target.value)}/>
+                        <Input style={{border: '2px solid #00A6CE', marginTop: "10px", height:"40px", width: "100%"}} size="medium" placeholder="Create a name..." value={studentName} onChange={(e)=> setStudentName(e.target.value)}/>
                       </div>
                   </Form.Item>
                   <Form.Item>

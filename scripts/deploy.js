@@ -3,7 +3,7 @@ const ipfs = require("../src/ipfs.json");
 
 async function main() {
   const NFT = await hre.ethers.getContractFactory("NFT");
-  const nft = await NFT.deploy("VANDUC", "VDC");
+  const nft = await NFT.deploy("ACCred", "ACE");
 
   await nft.deployed();
   
