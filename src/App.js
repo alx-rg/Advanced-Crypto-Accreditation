@@ -58,26 +58,26 @@ function App() {
       }
       else {
         console.log(studentName, faculty, degree, gradDate);
-        // setIsLoading(true);
+        setIsLoading(true);
         const prompt = `Person practicing ${degree} in ${scenery} in the style of ${artStyle}`
-        // console.log(prompt);
-        // // get image from huggingface
-        // const res = await axios({
-        //   url: URL,
-        //   method: 'POST',
-        //   data: JSON.stringify({
-        //     inputs: prompt,  options: { wait_for_model: true },
-        //   }),
-        //   responseType: 'arraybuffer',
-        // })
+        console.log(prompt);
+        // get image from huggingface
+        const res = await axios({
+          url: URL,
+          method: 'POST',
+          data: JSON.stringify({
+            inputs: prompt,  options: { wait_for_model: true },
+          }),
+          responseType: 'arraybuffer',
+        })
 
-        // console.log(res.data) 
-        // const dataImg = res.data;
-        // const base64data = Buffer.from(dataImg).toString('base64')
-        // const img = `data:image/png;base64,` + base64data 
-        // setImage(img)//set img = res
-        // // const dataImg = DUDegree;
-        // setIsLoading(false);
+        console.log(res.data) 
+        const dataImg = res.data;
+        const base64data = Buffer.from(dataImg).toString('base64')
+        const img = `data:image/png;base64,` + base64data 
+        setImage(img)//set img = res
+        // const dataImg = DUDegree;
+        setIsLoading(false);
    
         message.info("Please wait for create metadata URL...", 2)
  
@@ -104,7 +104,20 @@ function App() {
         ipfsURL = `https://nftstorage.link/ipfs/${ipnft}/metadata.json`
         console.log(ipfsURL)
 
-        // 
+        //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ 
+
+        //https://ipfs.io/ipfs/QmZ1Uii5sD2zi4dEKTt8cKoM9dXaevCkWbVn28UKV3n2fP?_gl=1*mvhkhn*_ga*NDU2NjE0MzYyLjE2NzcwOTcyNjg.*_ga_5RMPXG14TE*MTY3NzM1MDUzMy40LjAuMTY3NzM1MDUzNS41OC4wLjA.
+
+        // Here's the Metadata that worked for the Jim nft and how it's saved (somewhere?) on IPFS?
+        // this is the link URL: https://nftstorage.link/ipfs/bafyreibb62qw2pa3rfj5nkbhgtyyzjxefrqtkp5egpcnomrxfachgp35t4/metadata.json
+        // looking at my nft storage files, it was created earlier today at 3:13pm my time although the file itself is 0bytes, this exists.. somehwere?
+        //{
+        //"description": "Person practicing jim in jim in the style of Digital Art",
+        //"image": "ipfs://bafybeib3pewylyx3ib6lfyk36wsybohicw6bxhny26m34rbkipcrw2qc3i/image",
+        //"name": "jim",
+        //"attributes": []
+        //}
+        //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
         //degree image: bafkreib525dwem6nkvxpssxcefmn54vkwudplu3hsd432eqk67swizvvue
         // ipfs://bafkreiebcfgprfpcqmodsjglljji7xrq62fcmag636czzws66a7ohyss6u
