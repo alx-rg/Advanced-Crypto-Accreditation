@@ -40,6 +40,7 @@ function App() {
   const [artStyle, setArtStyle] = useState();
   const [isLoading, setIsLoading] = useState(false);
   const [isMinted, setIsMinted] = useState(false);
+  const [sendWallet, setSendWallet] = useState("");
 
   //url generate image
   const URL = "https://api-inference.huggingface.co/models/stabilityai/stable-diffusion-2";
@@ -53,7 +54,7 @@ function App() {
     }
     else {
       //check name, description
-      if(!studentName || !gradDate || !faculty || !degree) {
+      if(!studentName || !gradDate || !faculty || !degree || !sendWallet) {
         message.warning("Please input image information !", 1)
       }
       else {
@@ -90,9 +91,31 @@ function App() {
 
         //upload image to nftstorage
         const response = await nftstorage.store({
-          name: studentName,
-          description: prompt,
+          name: `${degree}, ${faculty}`,
+          description: `This NFT certifies that ${studentName} has completed a degree in ${degree} from the faculty ${faculty} on the date ${gradDate}.`,
           image: new File([dataImg], "image", {type: "image/png"}),
+          attributes: [
+            {
+              "trait_type": "Name",
+              "value": studentName
+            },            
+            {
+              "trait_type": "Degree Received",
+              "value": degree
+            },            
+            {
+              "trait_type": "Faculty",
+              "value": faculty
+            },
+            {
+              "trait_type": "Date Received",
+              "value": gradDate
+            },
+            {
+              "trait_type": "Art Style",
+              "value": artStyle
+            }
+          ]
         })
 
         const {ipnft} = response;
@@ -103,21 +126,6 @@ function App() {
         // WORKING: https://nftstorage.link/ipfs/bafybeifcaxugncajjxu3d6tik5spkyesqwuvm4uysye4cb6f6sflcxoj2q/testdata.json
         ipfsURL = `https://nftstorage.link/ipfs/${ipnft}/metadata.json`
         console.log(ipfsURL)
-
-        //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ 
-
-        //https://ipfs.io/ipfs/QmZ1Uii5sD2zi4dEKTt8cKoM9dXaevCkWbVn28UKV3n2fP?_gl=1*mvhkhn*_ga*NDU2NjE0MzYyLjE2NzcwOTcyNjg.*_ga_5RMPXG14TE*MTY3NzM1MDUzMy40LjAuMTY3NzM1MDUzNS41OC4wLjA.
-
-        // Here's the Metadata that worked for the Jim nft and how it's saved (somewhere?) on IPFS?
-        // this is the link URL: https://nftstorage.link/ipfs/bafyreibb62qw2pa3rfj5nkbhgtyyzjxefrqtkp5egpcnomrxfachgp35t4/metadata.json
-        // looking at my nft storage files, it was created earlier today at 3:13pm my time although the file itself is 0bytes, this exists.. somehwere?
-        //{
-        //"description": "Person practicing jim in jim in the style of Digital Art",
-        //"image": "ipfs://bafybeib3pewylyx3ib6lfyk36wsybohicw6bxhny26m34rbkipcrw2qc3i/image",
-        //"name": "jim",
-        //"attributes": []
-        //}
-        //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
         //degree image: bafkreib525dwem6nkvxpssxcefmn54vkwudplu3hsd432eqk67swizvvue
         // ipfs://bafkreiebcfgprfpcqmodsjglljji7xrq62fcmag636czzws66a7ohyss6u
@@ -134,7 +142,7 @@ function App() {
         setIsMinted(true);
 
         //mint nft
-        await nft.connect(signer).mint(ipfsURL)
+        await nft.connect(signer).mint(sendWallet, ipfsURL)
         message.success("NFT minted successfully !", 1);
         setIsMinted(false);
         console.log('nft minted successfully');
@@ -144,6 +152,7 @@ function App() {
         setDegree();
         setFaculty();
         setGradDate();
+        setSendWallet();
 
       }
     }
@@ -162,44 +171,44 @@ function App() {
                 <Button onClick={handleConnectWallet} type="primary" shape="round" size='large' style={{backgroundColor: "#00677F"}}>
                   <Avatar src={walletLogo} size={20} style={{marginRight: "10px", marginBottom:"3px", zIndex: "1", backgroundColor: "#00A6CE", padding: '2px'}}/>Connect Wallet
                 </Button>
-            :   <Button style={{borderColor: "#f2e604"}}>
-                    <Typography style={{color: '#f2e604', fontWeight:"bold"}}>{wallet?.address} | <Avatar src={bnb} size={22} style={{marginBottom:"3px", zIndex: "1", backgroundColor: "#00A6CE"}}/> {wallet?.balance.toFixed(4)}</Typography>
+            :   <Button style={{borderColor: "#00A6CE"}}>
+                    <Typography style={{color: '#00A6CE', fontWeight:"bold"}}>{wallet?.address} | <Avatar src={bnb} size={22} style={{marginBottom:"3px", zIndex: "1", backgroundColor: "#00A6CE"}}/> {wallet?.balance.toFixed(4)}</Typography>
                 </Button>
           }  
         </div>
       </div>
     <div className='container'>
-      <Card className="card">
+      <Card className="card" style={{marginBottom: "20px", marginTop: "20px"}}>
           <div className="body">
             <div>
                 <Form className="form-group">
                   <Form.Item>
                       <div className="form-group">
-                        <Typography.Text style={{fontWeight: "bolder", fontSize:"16px"}}>Student Name</Typography.Text>
-                        <Input style={{border: '2px solid #00A6CE', marginTop: "10px", height:"40px", width: "100%"}} size="medium" placeholder="Create a name..." value={studentName} onChange={(e)=> setStudentName(e.target.value)}/>
+                        <Typography.Text style={{fontWeight: "bolder", fontSize:"14px"}}>Student Name</Typography.Text>
+                        <Input style={{border: '2px solid #00A6CE', marginTop: "5px", height:"35px", width: "100%"}} size="medium" placeholder="Create a name..." value={studentName} onChange={(e)=> setStudentName(e.target.value)}/>
                       </div>
                   </Form.Item>
                   <Form.Item>
                       <div className="form-group">
-                        <Typography.Text style={{fontWeight: "bolder", fontSize:"16px"}}>Degree Name</Typography.Text>
-                        <Input style={{border: '2px solid #00A6CE', marginTop: "10px", height:"40px", width: "100%"}} size="medium" placeholder="Degree Name" value={degree} onChange={(e)=> setDegree(e.target.value)}/>
+                        <Typography.Text style={{fontWeight: "bolder", fontSize:"14px"}}>Degree Name</Typography.Text>
+                        <Input style={{border: '2px solid #00A6CE', marginTop: "5px", height:"35px", width: "100%"}} size="medium" placeholder="Degree Name" value={degree} onChange={(e)=> setDegree(e.target.value)}/>
                       </div>
                   </Form.Item>
                   <Form.Item>
-                      <Typography.Text style={{fontWeight: "bolder", fontSize:"16px"}}>Faculty</Typography.Text>
-                      <Input style={{border: '2px solid #00A6CE', marginTop: "10px", height:"40px",  width: "100%"}} size="medium" placeholder="Faculty" value={faculty} onChange={(e)=> setFaculty(e.target.value)}/>
+                      <Typography.Text style={{fontWeight: "bolder", fontSize:"14px"}}>Faculty</Typography.Text>
+                      <Input style={{border: '2px solid #00A6CE', marginTop: "5px", height:"35px",  width: "100%"}} size="medium" placeholder="Faculty" value={faculty} onChange={(e)=> setFaculty(e.target.value)}/>
                   </Form.Item>
                   <Form.Item>
-                      <Typography.Text style={{fontWeight: "bolder", fontSize:"16px"}}>Date</Typography.Text>
-                      <Input style={{border: '2px solid #00A6CE', marginTop: "10px", height:"40px",  width: "100%"}} size="medium" placeholder="Date" value={gradDate} onChange={(e)=> setGradDate(e.target.value)}/>
+                      <Typography.Text style={{fontWeight: "bolder", fontSize:"14px"}}>Date</Typography.Text>
+                      <Input style={{border: '2px solid #00A6CE', marginTop: "5px", height:"35px",  width: "100%"}} size="medium" placeholder="Date" value={gradDate} onChange={(e)=> setGradDate(e.target.value)}/>
                   </Form.Item>
                   <Form.Item>
-                      <Typography.Text style={{fontWeight: "bolder", fontSize:"16px"}}>Scenery for NFT Image</Typography.Text>
-                      <Input style={{border: '2px solid #00A6CE', marginTop: "10px", height:"40px",  width: "100%"}} size="medium" placeholder="Ex snowy mountain, rainforest, postapocalyptic city..." value={scenery} onChange={(e)=> setScenery(e.target.value)}/>
+                      <Typography.Text style={{fontWeight: "bolder", fontSize:"14px"}}>Scenery for NFT Image</Typography.Text>
+                      <Input style={{border: '2px solid #00A6CE', marginTop: "5px", height:"35px",  width: "100%"}} size="medium" placeholder="Ex snowy mountain, rainforest, postapocalyptic city..." value={scenery} onChange={(e)=> setScenery(e.target.value)}/>
                   </Form.Item>
                   <Form.Item>
-                      <Typography.Text style={{fontWeight: "bolder", fontSize:"16px"}}>Art style for NFT</Typography.Text>
-                      <Select style={{border: '2px solid #00A6CE', marginTop: "10px", height:"40px",  width: "100%"}} size="medium" placeholder="Choose art style" value={artStyle} 
+                      <Typography.Text style={{fontWeight: "bolder", fontSize:"14px"}}>Art style for NFT</Typography.Text>
+                      <Select style={{border: '2px solid #00A6CE', marginTop: "5px", height:"35px",  width: "100%"}} size="medium" placeholder="Choose art style" value={artStyle} 
                         onChange={(e)=> {
                           setArtStyle(e)}
                         } options={[ { value: "Art Deco", label: "Art Deco" },  
@@ -222,10 +231,15 @@ function App() {
                         ]}/>
                   </Form.Item>
                   <Form.Item>
+                      <Typography.Text style={{fontWeight: "bolder", fontSize:"14px"}}>Send To Graduate's Wallet number</Typography.Text>
+                      <Input style={{border: '2px solid #00A6CE', marginTop: "5px", height:"35px",  width: "100%"}} size="medium" placeholder="The Wallet # you would like to send this nft to..." value={sendWallet} onChange={(e)=> setSendWallet(e.target.value)}/>
+                  </Form.Item>
+                  <Form.Item>
                     <Button onClick={handleNFT} type="primary" shape="square" size='large' style={{width: "100%", height:"60px", marginTop: "10px", backgroundColor: "#00677F"}}>
                       Generate & Mint
                     </Button>
                   </Form.Item>
+                 
                 </Form>
             </div>
             <div className='img'>

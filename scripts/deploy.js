@@ -1,5 +1,5 @@
 const hre = require("hardhat");
-const ipfs = require("../src/ipfs.json");
+
 
 async function main() {
   const NFT = await hre.ethers.getContractFactory("NFT");
@@ -8,10 +8,6 @@ async function main() {
   await nft.deployed();
   
   console.log("Successfully deployed smart contract to: ", nft.address);
-
-  await nft.mint(ipfs.url);
-
-  console.log("NFT successfully minted");
 
 }
 

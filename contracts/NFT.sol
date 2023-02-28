@@ -12,23 +12,16 @@ contract NFT is ERC721URIStorage {
         ERC721(_name, _symbol)
     {}
 
-    function mint(string memory tokenURI) public returns (uint256) {
+    function mint(address _to, string memory tokenURI)
+        public
+        returns (uint256)
+    {
         uint256 newItemId = _tokenIds.current();
         _mint(msg.sender, newItemId);
         _setTokenURI(newItemId, tokenURI);
 
         _tokenIds.increment();
+        transferFrom(msg.sender, _to, newItemId);
         return newItemId;
-    }
-
-    function transferNFT(address _to, uint256 _tokenId) public {
-        // Check if the sender is the owner of the token
-        require(
-            ownerOf(_tokenId) == msg.sender,
-            "You are not the owner of this token"
-        );
-
-        // Transfer the token to the new owner
-        transferFrom(msg.sender, _to, _tokenId);
     }
 }
