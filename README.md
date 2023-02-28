@@ -2,16 +2,26 @@
 
 #### TLDR
 
+The project is intended to facilitate the accreditation and verification of Degrees (or other certifications) through the use of NFT and the Blockchain. The NFTs use prompts received from the Registrar’s office along with information from the student degree to create a unique image with Stable Diffusion. NFTs can be minted by the Registrar’s office at the time of accreditation and sent to the wallet of the graduating student.
+
 ACCred is an easy to use method to prove that an individual has in fact received their accreditation from a specific institution. ACCred uses a Stable Diffusion v2 Model Card and the input from the Registrar's office along with some funky scenery provided by the user.
 
 ```mermaid
 graph LR
 A[University] ---> B((Digital Degree))
-A --> C(Physical Degree)
+A --> C(Physical Degree)yarn
 B --> D{Individual & Wallet}
 D --> E(Proof of Completion)
 C --> D
 ```
+
+##### Steps to mint yourself an NFT!
+
+1. Create a Metamask Wallet
+2. Fund your Metamask Wallet with https://goerlifaucet.com/
+3. Hit up our website and enter all the prompts
+4. Make sure you enter the wallet address the NFT will be sent
+5. Look at the NFT collection with https://testnets.opensea.io/collection/accred-1
 
 ### More About ACCred
 
@@ -40,3 +50,5 @@ ACCred's future plans include expanding into new industries and regions, as well
 ACCred is also planning to add new verification methods to its platform, such as biometric authentication and artificial intelligence-based verification. These technologies will further enhance the security and reliability of ACCred's digital credentials, making them even more difficult to forge or manipulate.
 
 In addition, ACCred is exploring ways to integrate its platform with other blockchain-based systems and applications, such as supply chain management and digital identity systems. By leveraging the power of blockchain technology, ACCred aims to create a more secure and trustworthy digital ecosystem for individuals and organizations around the world.
+
+Aspects of the project was based on : https://github.com/vanduc19it/generate_mint_nft
